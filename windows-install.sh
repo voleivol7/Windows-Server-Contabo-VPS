@@ -24,7 +24,7 @@ apt-get clean -y
 
 echo ""
 echo "Install necessary tools using APT ..."
-apt-get install grub2 wimtools ntfs-3g parted -y
+apt-get install grub2 wimtools ntfs-3g parted curl wget -y
 
 echo ""
 echo "Cleaning APT files ..."
@@ -41,8 +41,9 @@ if [[ "$free_space" -lt 200 ]]; then
 	exit 1
 fi
 
+
 # Define the user agent to use for download ISO files
-WGET_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 
 # Variables for ISO download URLs (English versions)
 WINDOWS_10_EN_ISO_URL=""
@@ -57,7 +58,32 @@ WINDOWS_SERVER_2019_FR_ISO_URL="https://software-static.download.prss.microsoft.
 WINDOWS_SERVER_2022_FR_ISO_URL="https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_fr-fr.iso"
 
 # VirtIO ISO URL
-VIRTIO_ISO_URL="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.262-2/virtio-win-0.1.262.iso"
+VIRTIO_STABLE_URL="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/"
+
+# Query the page of Virtio Stable to try to find the latest stable version to use
+virtio_stable_page_content=$( curl --user-agent "$USER_AGENT" --silent --location "$VIRTIO_STABLE_URL" )
+
+# Make sure we got a valid response
+if [[ -z $virtio_stable_page_content ]]; then
+	echo "Error, unable to fetch the content of the page $VIRTIO_STABLE_URL"
+	exit 1
+fi
+
+# Clean the page content to only keep what we need
+virtio_stable_page_content=$( echo "$virtio_stable_page_content" | tr '<>"' '\n' | grep -E "Index of|virtio-win.*\.iso$" | grep -v "virtio-win.iso" | sort | uniq | sed -E "s|.*Index of ||g" )
+
+# Extract the path and the filename to use
+virtio_stable_folders=$( echo "$virtio_stable_page_content" | grep -E "^/groups" | sed -E "s|^/||g" )
+virtio_stable_filename=$( echo "$virtio_stable_page_content" | grep -E -v "^/groups" | grep -E "\.iso$" )
+
+# Make sure we found some content
+if [[ -z $virtio_stable_folders || -z $virtio_stable_filename ]]; then
+	echo "Error, unable to detect the URL to use to download the latest stable version of Virtio Drivers"
+	exit 1
+fi
+
+# Build the URL
+VIRTIO_ISO_URL="https://fedorapeople.org/$virtio_stable_folders/$virtio_stable_filename"
 
 # Partition sizes (in MB)
 MBR_PARTITION_SIZE_MB=100       # MBR/Bootloader partition size
@@ -128,6 +154,11 @@ if [[ -z "$WINDOWS_ISO_URL" ]]; then
     echo "Error: Empty ISO URL. Please verify."
     exit 1
 fi
+
+# Show the URLs we will be using
+echo "WINDOWS_ISO_URL: $WINDOWS_ISO_URL"
+echo "VIRTIO_ISO_URL (latest stable): $VIRTIO_ISO_URL"
+echo ""
 
 # Get the disk size in MB
 disk_size_gb=$(parted /dev/sda --script print | awk '/^Disk \/dev\/sda:/ {print int($3)}')
@@ -238,11 +269,11 @@ mount /dev/sda2 /mnt/download
 
 echo ""
 echo "Download the Windows installer ISO ..."
-wget -O /mnt/download/windows.iso --user-agent="$WGET_USER_AGENT" "$WINDOWS_ISO_URL"
+wget -O /mnt/download/windows.iso --user-agent="$USER_AGENT" "$WINDOWS_ISO_URL"
 
 echo ""
 echo "Download and add VirtIO drivers ..."
-wget -O /mnt/download/virtio.iso --user-agent="$WGET_USER_AGENT" "$VIRTIO_ISO_URL"
+wget -O /mnt/download/virtio.iso --user-agent="$USER_AGENT" "$VIRTIO_ISO_URL"
 
 echo ""
 echo "Show the files in /mnt/download ..."

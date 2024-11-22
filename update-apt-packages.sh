@@ -55,7 +55,7 @@ if [[ ! -z $( apt-get upgrade --simulate | grep "linux-image-amd64" ) ]]; then
 fi
 
 echo ""
-echo "Updating APT packages (2nd attempt) ..."
+echo "Updating APT packages ..."
 apt-get upgrade -y
 
 echo ""

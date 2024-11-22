@@ -1,5 +1,46 @@
 #!/bin/bash
 
+# Calculate the free size on the current partition
+free_space=$( df --block-size=1M / | awk 'NR==2 {print $4}' )
+
+# Show a warning if there's less than 400 MB on the current partition
+if [[ "$free_space" -lt 400 ]]; then
+	echo "Warning, there is only $free_space MB of free space on the current / partition, so the installation will very likely fail."
+fi
+
+echo ""
+echo "Refreshing the list of APT packages available ..."
+apt-get update
+
+echo ""
+echo "Install update APT packages..."
+apt-get upgrade -y
+
+echo ""
+echo "Cleaning APT files ..."
+apt-get autoremove -y
+apt-get autoclean -y
+apt-get clean -y
+
+echo ""
+echo "Install necessary tools using APT ..."
+apt-get install grub2 wimtools ntfs-3g parted -y
+
+echo ""
+echo "Cleaning APT files ..."
+apt-get autoremove -y
+apt-get autoclean -y
+apt-get clean -y
+
+# Re-calculate the free size on the current partition
+free_space=$( df --block-size=1M / | awk 'NR==2 {print $4}' )
+
+# Exit if there's less than 200 MB on the current partition
+if [[ "$free_space" -lt 200 ]]; then
+	echo "Error, there is only $free_space MB of free space on the current / partition, so the installation will very likely fail."
+	exit 1
+fi
+
 # Define the user agent to use for download ISO files
 WGET_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 
@@ -25,11 +66,6 @@ INSTALLER_PARTITION_SIZE_MB=10240 # Temporary installer partition size (10 GB)
 
 # Calculate required disk size
 REQUIRED_DISK_SIZE_MB=$((MBR_PARTITION_SIZE_MB + INSTALLER_PARTITION_SIZE_MB + WINDOWS_PARTITION_SIZE_MB))
-
-echo ""
-echo "Install necessary tools ..."
-apt update -y && apt upgrade -y
-apt install grub2 wimtools ntfs-3g -y
 
 echo ""
 

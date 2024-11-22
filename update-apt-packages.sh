@@ -16,20 +16,21 @@ if [[ "$os_name" != "debian" ]]; then
 	exit 1
 fi
 
-echo ""
-echo "Recreating the file /etc/apt/sources.list ..."
-
 if [[ "$os_codename" == "buster" ]]; then
+    echo ""
+    echo "Recreating the file /etc/apt/sources.list for $os_codename ..."
     echo "deb http://deb.debian.org/debian $os_codename main contrib non-free" > /etc/apt/sources.list
     echo "deb http://deb.debian.org/debian $os_codename-updates main contrib non-free" >> /etc/apt/sources.list
     echo "deb http://security.debian.org/debian-security/ $os_codename/updates main contrib non-free" >> /etc/apt/sources.list
 fi
 
 if [[ "$os_codename" == "bookworm" ]]; then
+    echo ""
+    echo "Recreating the file /etc/apt/sources.list for $os_codename ..."
     echo "deb http://deb.debian.org/debian $os_codename contrib main non-free-firmware" > /etc/apt/sources.list
-    echo "deb http://deb.debian.org/debian $os_codename-updates contrib main non-free-firmware" > /etc/apt/sources.list
-    echo "deb http://deb.debian.org/debian $os_codename-backports contrib main non-free-firmware" > /etc/apt/sources.list
-    echo "deb http://deb.debian.org/debian-security $os_codename-security contrib main non-free-firmware" > /etc/apt/sources.list
+    echo "deb http://deb.debian.org/debian $os_codename-updates contrib main non-free-firmware" >> /etc/apt/sources.list
+    echo "deb http://deb.debian.org/debian $os_codename-backports contrib main non-free-firmware" >> /etc/apt/sources.list
+    echo "deb http://deb.debian.org/debian-security $os_codename-security contrib main non-free-firmware" >> /etc/apt/sources.list
 fi
 
 echo ""

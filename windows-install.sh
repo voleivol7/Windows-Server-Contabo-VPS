@@ -6,6 +6,17 @@ free_space=$( df --block-size=1M / | awk 'NR==2 {print $4}' )
 # Show a warning if there's less than 400 MB on the current partition
 if [[ "$free_space" -lt 400 ]]; then
 	echo "Warning, there is only $free_space MB of free space on the current / partition, so the installation will very likely fail."
+	
+	# Prompt the user for confirmation
+	echo ""
+	read -p "Do you want to continue anyway? (y/n): " choice
+
+	# Check the user's input
+	if [[ "$choice" != "y" && "$choice" != "Y" ]]; then
+		echo "Exiting ..."
+		exit 0
+	fi
+	
 fi
 
 echo ""
@@ -106,10 +117,10 @@ echo "6) Windows 11 (French)"
 echo "7) Windows Server 2019 (French)"
 echo "8) Windows Server 2022 (French)"
 echo ""
-read -p "Enter the number corresponding to your choice: " windows_choice
+read -p "Enter the number corresponding to your choice: " choice
 
 # Determine the ISO URL based on user choice
-case $windows_choice in
+case $choice in
     1)
         WINDOWS_ISO_URL="$WINDOWS_10_EN_ISO_URL"
         echo "Windows 10 (English) selected."
@@ -156,9 +167,9 @@ if [[ -z "$WINDOWS_ISO_URL" ]]; then
 fi
 
 # Show the URLs we will be using
+echo ""
 echo "WINDOWS_ISO_URL: $WINDOWS_ISO_URL"
 echo "VIRTIO_ISO_URL (latest stable): $VIRTIO_ISO_URL"
-echo ""
 
 # Get the disk size in MB
 disk_size_gb=$(parted /dev/sda --script print | awk '/^Disk \/dev\/sda:/ {print int($3)}')
@@ -166,17 +177,22 @@ disk_size_mb=$((disk_size_gb * 1024))
 
 # Check if the disk is large enough
 if [ "$disk_size_mb" -lt "$REQUIRED_DISK_SIZE_MB" ]; then
+	echo ""
     echo "Error: The disk is too small. At least $((REQUIRED_DISK_SIZE_MB / 1024)) GB is required."
     echo "Detected disk size: $((disk_size_mb / 1024)) GB."
     exit 1
 fi
 
 # Show warning
+echo ""
 echo "Warning: This script will erase all partitions on /dev/sda and create a new partition table."
-read -p "Are you sure you want to continue? (yes/no): " confirm
-if [[ "$confirm" != "yes" ]]; then
-    echo "Aborting script."
-    exit 1
+echo ""
+read -p "Are you sure you want to continue? (y/n): " choice
+
+# Check the user's input
+if [[ "$choice" != "y" && "$choice" != "Y" ]]; then
+	echo "Exiting ..."
+	exit 0
 fi
 
 echo ""

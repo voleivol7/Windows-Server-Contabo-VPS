@@ -10,10 +10,21 @@ echo "os_name: $os_name"
 echo "os_codename: $os_codename"
 echo ""
 
-# Make sure this script is for Debian Linux
-if [[ "$os_name" != "debian" ]]; then
-	echo "Error: This script is made for Debian Linux."
-	exit 1
+# Check the OS, and show a warning if it's not officialy supported
+if [[ "$os_codename" != "buster" && "$os_codename" != "bookworm" ]]; then
+	echo ""
+	echo "Warning, this script was made for Debian buster or Debian bookworm."
+	
+	# Prompt the user for confirmation
+	echo ""
+	read -p "Do you want to continue anyway ? (y/n): " choice
+
+	# Check the user's input
+	if [[ "$choice" != "y" && "$choice" != "Y" ]]; then
+		echo "Exiting ..."
+		exit 0
+	fi
+
 fi
 
 if [[ "$os_codename" == "buster" ]]; then
@@ -43,16 +54,46 @@ apt-get clean -y
 apt-get autoclean -y
 apt-get autoremove -y
 
-# Check if we need to upgrade kernel package
+# Calculate the free size on the current / partition
+free_space=$( df --block-size=1M / | awk 'NR==2 {print $4}' )
+
+echo ""
+echo "Free space on the main partition: $free_space MB"
+
+# Prompt the user for confirmation
+echo ""
+read -p "Do you want to continue? (y/n): " choice
+
+# Check the user's input
+if [[ "$choice" != "y" && "$choice" != "Y" ]]; then
+	echo "Exiting ..."
+	exit 0
+fi
+
+# Check if we need to update the kernel packages
 if [[ ! -z $( apt-get upgrade --simulate | grep "linux-image-amd64" ) ]]; then
+
 	echo ""
-	echo "Updating Linux Kernel ..."
-	apt-get install -y linux-headers-amd64 linux-image-amd64
+	echo "A kernel update seems to be available."
+	
+	# Prompt the user for confirmation
 	echo ""
-	echo "Cleaning APT files ..."
-	apt-get clean -y
-	apt-get autoclean -y
-	apt-get autoremove -y
+	read -p "Do you want to update the kernel ? (y/n): " choice
+
+	# Check the user's input
+	if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
+		echo ""
+		echo "Updating Linux Kernel ..."
+		apt-get install -y linux-headers-amd64 linux-image-amd64
+		echo ""
+		echo "Cleaning APT files ..."
+		apt-get clean -y
+		apt-get autoclean -y
+		apt-get autoremove -y
+	else
+		echo ""
+		echo "Skipping kernel update."
+	fi
 fi
 
 echo ""

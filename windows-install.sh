@@ -62,11 +62,11 @@ WINDOWS_11_EN_ISO_URL=""
 WINDOWS_SERVER_2019_EN_ISO_URL="https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66749/17763.3650.221105-1748.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
 WINDOWS_SERVER_2022_EN_ISO_URL="https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
 
-# Variables for ISO download URLs (French versions)
-WINDOWS_10_FR_ISO_URL=""
-WINDOWS_11_FR_ISO_URL=""
-WINDOWS_SERVER_2019_FR_ISO_URL="https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66749/17763.3650.221105-1748.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_fr-fr.iso"
-WINDOWS_SERVER_2022_FR_ISO_URL="https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_fr-fr.iso"
+# Variables for ISO download URLs (Spanish versions)
+WINDOWS_10_ES_ISO_URL=""
+WINDOWS_11_ES_ISO_URL=""
+WINDOWS_SERVER_2019_ES_ISO_URL="https://software-static.download.prss.microsoft.com/dbazure/988969d5-f34g-4e03-ac9d-1f9786c66749/17763.3650.221105-1748.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_es-es.iso"
+WINDOWS_SERVER_2022_ES_ISO_URL="https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_es-es.iso"
 
 # VirtIO ISO URL
 VIRTIO_STABLE_URL="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/"
@@ -112,10 +112,10 @@ echo "1) Windows 10 (English)"
 echo "2) Windows 11 (English)"
 echo "3) Windows Server 2019 (English)"
 echo "4) Windows Server 2022 (English)"
-echo "5) Windows 10 (French)"
-echo "6) Windows 11 (French)"
-echo "7) Windows Server 2019 (French)"
-echo "8) Windows Server 2022 (French)"
+echo "5) Windows 10 (Spanish)"
+echo "6) Windows 11 (Spanish)"
+echo "7) Windows Server 2019 (Spanish)"
+echo "8) Windows Server 2022 (Spanish)"
 echo ""
 read -p "Enter the number corresponding to your choice: " choice
 
@@ -138,19 +138,19 @@ case $choice in
         echo "Windows Server 2022 (English) selected."
         ;;
     5)
-        WINDOWS_ISO_URL="$WINDOWS_10_FR_ISO_URL"
+        WINDOWS_ISO_URL="$WINDOWS_10_ES_ISO_URL"
         echo "Windows 10 (French) selected."
         ;;
     6)
-        WINDOWS_ISO_URL="$WINDOWS_11_FR_ISO_URL"
+        WINDOWS_ISO_URL="$WINDOWS_11_ES_ISO_URL"
         echo "Windows 11 (French) selected."
         ;;
     7)
-        WINDOWS_ISO_URL="$WINDOWS_SERVER_2019_FR_ISO_URL"
+        WINDOWS_ISO_URL="$WINDOWS_SERVER_2019_ES_ISO_URL"
         echo "Windows Server 2019 (French) selected."
         ;;
     8)
-        WINDOWS_ISO_URL="$WINDOWS_SERVER_2022_FR_ISO_URL"
+        WINDOWS_ISO_URL="$WINDOWS_SERVER_2022_ES_ISO_URL"
         echo "Windows Server 2022 (French) selected."
         ;;
     *)

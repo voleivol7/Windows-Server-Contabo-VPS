@@ -215,16 +215,16 @@ sleep 10
 echo ""
 echo "Detecting partition changes (1/3) ..."
 partprobe /dev/sda
-echo "Sleeping 10 seconds (1/3) ..."
-sleep 10
+echo "Sleeping 15 seconds (1/3) ..."
+sleep 15
 echo "Detecting partition changes (2/3) ..."
 partprobe /dev/sda
-echo "Sleeping 10 seconds (2/3) ..."
-sleep 10
+echo "Sleeping 15 seconds (2/3) ..."
+sleep 15
 echo "Detecting partition changes (3/3) ..."
 partprobe /dev/sda
-echo "Sleeping 10 seconds (3/3) ..."
-sleep 10
+echo "Sleeping 15 seconds (3/3) ..."
+sleep 15
 
 echo ""
 echo "Format the partitions ..."

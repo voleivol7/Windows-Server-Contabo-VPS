@@ -238,6 +238,7 @@ echo -e "r\ng\np\nw\nY\n" | gdisk /dev/sda
 
 echo ""
 echo "Partitions created and formatted !"
+fdisk -l /dev/sda
 
 echo ""
 echo "Sleeping 10 seconds ..."

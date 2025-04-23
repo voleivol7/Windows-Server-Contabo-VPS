@@ -240,6 +240,10 @@ echo ""
 echo "Partitions created and formatted !"
 
 echo ""
+echo "Sleeping 10 seconds ..."
+sleep 10
+
+echo ""
 echo "Show the files in /mnt ..."
 ls -alh /mnt
 
@@ -248,6 +252,10 @@ echo "Install GRUB to the first partition (MBR/Bootloader) ..."
 mkdir /mnt/grub
 mount /dev/sda1 /mnt/grub
 grub-install --root-directory=/mnt/grub /dev/sda
+
+echo ""
+echo "Sleeping 10 seconds ..."
+sleep 10
 
 echo ""
 echo "Show the files in /mnt/grub ..."
